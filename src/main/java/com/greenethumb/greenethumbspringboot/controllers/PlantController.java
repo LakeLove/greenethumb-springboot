@@ -22,10 +22,16 @@ public class PlantController {
   List<Plant> findAllPlants() throws IOException {
     return plantService.findAllPlants();
   }
-  
+
+  @GetMapping (value = "/page={number}")
+  @ResponseBody
+  List<Plant> findAllPlantsByPage(@PathVariable ("number") Integer number) throws IOException {
+    return plantService.findAllPlantsByPage(number);
+  }
+
   @GetMapping (value = "/id={id}")
   @ResponseBody
-  Species findById(@PathVariable ("id") Long id) throws IOException, UnirestException {
+  Species findById(@PathVariable ("id") Long id) throws IOException {
     return plantService.findById(id);
   }
 

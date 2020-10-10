@@ -39,6 +39,14 @@ public class PlantService {
     }
   }
 
+  public List<Plant> findAllPlantsByPage(Integer pageNumber) throws IOException {
+    String URL = rootURL+"/api/v1/plants?token="+token+"&page="+pageNumber;
+    Request request = new Request.Builder().url(URL).build();
+    try (Response response = client.newCall(request).execute()) {
+      return toDataPlants((response.body()).string()).getPlants();
+    }
+  }
+
   public Species findById(Long id) throws IOException {
     Plant plant = findPlantById(id);
     String URL = rootURL+plant.getLinks().getSelf()+"?token="+token;
@@ -52,11 +60,7 @@ public class PlantService {
     Plant plant = searchPlant(id, findAllPlants());
     int page = 2;
     while (plant == null) {
-      String URL = rootURL+"/api/v1/plants?token="+token+"&page="+page;
-      Request request = new Request.Builder().url(URL).build();
-      try (Response response = client.newCall(request).execute()) {
-        plant = searchPlant(id, toDataPlants((response.body()).string()).getPlants());
-      }
+      plant = searchPlant(id, findAllPlantsByPage(page));
       page++;
     }
     return plant;
