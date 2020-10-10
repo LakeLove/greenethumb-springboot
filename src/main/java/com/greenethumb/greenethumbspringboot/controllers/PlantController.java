@@ -1,6 +1,6 @@
 package com.greenethumb.greenethumbspringboot.controllers;
 
-import com.greenethumb.greenethumbspringboot.entities.Plant;
+import com.greenethumb.greenethumbspringboot.entities.plants.Plant;
 import com.greenethumb.greenethumbspringboot.entities.species.Species;
 import com.greenethumb.greenethumbspringboot.services.PlantService;
 import com.mashape.unirest.http.exceptions.UnirestException;

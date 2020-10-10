@@ -1,6 +1,7 @@
-package com.greenethumb.greenethumbspringboot.entities;
+package com.greenethumb.greenethumbspringboot.entities.plants;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.greenethumb.greenethumbspringboot.entities.Links;
 
 import java.util.List;
 

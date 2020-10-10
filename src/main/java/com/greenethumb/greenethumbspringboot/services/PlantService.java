@@ -3,9 +3,9 @@ package com.greenethumb.greenethumbspringboot.services;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.greenethumb.greenethumbspringboot.entities.DataSpecies;
-import com.greenethumb.greenethumbspringboot.entities.DataPlants;
-import com.greenethumb.greenethumbspringboot.entities.Plant;
+import com.greenethumb.greenethumbspringboot.entities.species.DataSpecies;
+import com.greenethumb.greenethumbspringboot.entities.plants.DataPlants;
+import com.greenethumb.greenethumbspringboot.entities.plants.Plant;
 //import com.greenethumb.greenethumbspringboot.repositories.PlantRepositority;
 import com.greenethumb.greenethumbspringboot.entities.species.Species;
 import okhttp3.OkHttpClient;
@@ -38,26 +38,41 @@ public class PlantService {
       return toDataPlants((response.body()).string()).getPlants();
     }
   }
-  
+
   public Species findById(Long id) throws IOException {
+    Plant plant = findPlantById(id);
+    String URL = rootURL+plant.getLinks().getSelf()+"?token="+token;
+    Request request = new Request.Builder().url(URL).build();
+    try (Response response = client.newCall(request).execute()) {
+      return toDataSpecies((response.body()).string()).getSpecies();
+    }
+  }
+
+  public Plant findPlantById(Long id) throws IOException {
+    Plant plant = searchPlant(id, findAllPlants());
+    int page = 2;
+    while (plant == null) {
+      String URL = rootURL+"/api/v1/plants?token="+token+"&page="+page;
+      Request request = new Request.Builder().url(URL).build();
+      try (Response response = client.newCall(request).execute()) {
+        plant = searchPlant(id, toDataPlants((response.body()).string()).getPlants());
+      }
+      page++;
+    }
+    return plant;
+  }
+
+  public Plant searchPlant(Long id, List<Plant> plants) {
     Plant plant = null;
-    for (Plant p : findAllPlants()) {
+    for (Plant p : plants) {
       if (p.getId().equals(id)) {
         plant = p;
         break;
       }
     }
-    if (plant != null) {
-      String URL = rootURL+plant.getLinks().getSelf()+"?token="+token;
-      Request request = new Request.Builder().url(URL).build();
-      try (Response response = client.newCall(request).execute()) {
-        return toDataSpecies((response.body()).string()).getSpecies();
-      }
-    } else {
-      return null;
-    }
+    return plant;
   }
-  
+
   public static DataPlants toDataPlants(String json) throws IOException {
     JavaType type = objectMapper.getTypeFactory().constructType(DataPlants.class);
     objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);

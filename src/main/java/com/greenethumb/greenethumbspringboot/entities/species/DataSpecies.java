@@ -1,4 +1,4 @@
-package com.greenethumb.greenethumbspringboot.entities;
+package com.greenethumb.greenethumbspringboot.entities.species;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
